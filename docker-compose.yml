@@ -1,0 +1,16 @@
+version: "3.7"
+services:
+  print:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: python-dev:1.1
+    container_name: gestsis-print
+    restart: unless-stopped
+    tty: true
+    working_dir: /app
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+    command: sh -c "sh"
