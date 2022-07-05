@@ -1,17 +1,26 @@
 const puppeteer = require('puppeteer');
 const express = require('express');
 const { expressjwt } = require("express-jwt");
+const fs = require('fs');
 require('dotenv').config();
 
-(async () => {
+let publicKey = "";
+try {
+    publicKey = fs.readFileSync('keys/auth-public.key', 'utf8');
+    console.log(publicKey)
+} catch (err) {
+    console.error(err);
+}
 
-    const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] });
-    const page = await browser.newPage();
+// (async () => {
 
-    await page.goto("https://apis.gestsis.ch");
-    const pdf = await page.pdf({ format: 'A4' });
+//     const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+//     const page = await browser.newPage();
 
-    await browser.close();
+//     await page.goto("https://apis.gestsis.ch");
+//     const pdf = await page.pdf({ format: 'A4' });
 
-    console.log(pdf);
-})()
+//     await browser.close();
+
+//     console.log(pdf);
+// })()

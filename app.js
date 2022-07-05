@@ -1,14 +1,22 @@
 const puppeteer = require('puppeteer');
 const express = require('express');
 const { expressjwt } = require("express-jwt");
+const fs = require('fs');
 require('dotenv').config();
 
 const app = express();
 const port = 3000;
 
+let publicKey = "";
+try {
+  publicKey = fs.readFileSync('keys/auth-public.key', 'utf8');
+} catch (err) {
+  console.error(err);
+}
+
 // Set up JWT middleware
 app.use(
-  expressjwt({ secret: process.env.PUBLIC_KEY.replace("\\n", "\n"), algorithms: [process.env.PUBLIC_KEY_ALGORITHM] })
+  expressjwt({ secret: publicKey, algorithms: ["RS256"] })
     .unless({ path: ["/"] })
 );
 
