@@ -38,4 +38,4 @@ jobs:
         run: ssh staging "cd ~/apps/print.gestsis.ch && source ~/nodevenv/apps/print.gestsis.ch/16/bin/activate && yarn install --production"
 
       - name: Restart service
-        run: ssh staging "touch ~/apps/alarm.gestsis.ch/tmp/restart.txt"
+        run: ssh staging "touch ~/apps/print.gestsis.ch/tmp/restart.txt"
