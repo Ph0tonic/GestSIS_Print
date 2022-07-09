@@ -14,52 +14,92 @@ try {
   console.error(err);
 }
 
-// Set up JWT middleware
+// Setup JWT middleware
 app.use(
   expressjwt({ secret: publicKey, algorithms: ["RS256"] })
     .unless({ path: ["/"] })
 );
 
+// Setup cors middleware
+const cors = require('cors');
+app.use(cors({
+  origin: '*'
+}));
+
 // Single and only valid route
-app.get(
-  '/',
-  async (_, res) => {
-    res.send("Welcome on GestSIS Print");
+app.get('/', async (_, res) => {
+  res.send("Welcome on GestSIS Print");
+});
+
+const htmlToPdf = async (url, pageModifier) => {
+  const browser = await puppeteer.launch(({ headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-web-security', '--disable-features=BlockInsecurePrivateNetworkRequests'] }));
+  const page = await browser.newPage();
+
+  if (pageModifier) {
+    await pageModifier(page);
   }
-);
-app.get(
-  '/print',
-  async (req, res) => {
 
-    const sisId = req.get("Sis-Id");
-    if (!sisId) {
-      res.status(401).json({ error: { message: "Missing SisId" } });
-      return;
-    }
+  const templateFooter = fs.readFileSync('templates/footer.html', 'utf-8')
+  const templateHeader = fs.readFileSync('templates/header.html', 'utf-8')
 
-    const authorization = req.get("Authorization");
-    const url = decodeURI(req.query.url);
-    if (!url.startsWith(process.env.ALLOWED_HOST)) {
-      res.status(401).json({ error: { message: "Invalid URL" } });
-      return;
-    }
-    const browser = await puppeteer.launch(({ headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] }));
-    const page = await browser.newPage();
+  await page.goto(url, { waitUntil: 'networkidle0' });
+  const pdf = await page.pdf({
+    format: 'A4',
+    margin: { left: '2.5cm', top: '1cm', right: '1cm', bottom: '2cm' },
+    displayHeaderFooter: true,
+    headerTemplate: templateHeader,
+    footerTemplate: templateFooter,
+  });
 
+  await browser.close();
+
+  return pdf
+}
+
+const handlePrintRequest = async (req, res) => {
+  const sisId = req.get("Sis-Id");
+  if (!sisId) {
+    res.status(401).json({ error: { message: "Missing SisId" } });
+    return;
+  }
+
+  const authorization = req.get("Authorization");
+  let url = decodeURIComponent(req.query.url);
+
+  if (!url.startsWith(process.env.ALLOWED_HOST)) {
+    res.status(401).json({ error: { message: "Invalid URL" } });
+    return;
+  }
+  url = url.replace(process.env.ALLOWED_HOST, process.env.EFFECTIVE_BASE_URL)
+
+  console.log("Loading : " + url);
+
+  const pdf = await htmlToPdf(url, async (page) => {
     await page.setExtraHTTPHeaders({
-      'Sis-Id': sisId,
-      'Authorization': authorization,
+      'sis-id': sisId,
+      'authorization': authorization,
     });
 
-    await page.goto(url, { waitUntil: 'networkidle0' });
-    const pdf = await page.pdf({ format: 'A4' });
+    // TODO: Handle invalid response
+    page.on('requestfailed', request => {
+      console.log(`url: ${request.url()}, errText: ${request.failure().errorText}, method: ${request.method()}`)
+    });
+    page.on("pageerror", err => {
+      console.log(`Page error: ${err.toString()}`);
+    });
+    page.on('console', msg => {
+      console.log('Logger:', msg.type());
+      console.log('Logger:', msg.text());
+      console.log('Logger:', msg.location());
+    });
+  });
 
-    await browser.close();
+  console.log("PDF generated");
+  res.set({ 'Content-Type': 'application/pdf', 'Content-Length': pdf.length })
+  res.send(pdf)
+}
 
-    res.set({ 'Content-Type': 'application/pdf', 'Content-Length': pdf.length })
-    res.send(pdf)
-  }
-);
+app.get('/api/v1/print', handlePrintRequest);
 
 app.listen(port, () => {
   console.log(`GestSIS Print listening on port ${port}`)
