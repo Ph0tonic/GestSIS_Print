@@ -45,7 +45,7 @@ const htmlToPdf = async (url, pageModifier) => {
   await page.goto(url, { waitUntil: 'networkidle0' });
   const pdf = await page.pdf({
     format: 'A4',
-    margin: { left: '2.5cm', top: '1cm', right: '1cm', bottom: '2cm' },
+    margin: { left: '1.5cm', top: '1cm', right: '0.5cm', bottom: '2cm' },
     displayHeaderFooter: true,
     headerTemplate: templateHeader,
     footerTemplate: templateFooter,
