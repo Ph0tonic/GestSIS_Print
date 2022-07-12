@@ -31,7 +31,7 @@ app.get('/', async (_, res) => {
   res.send("Welcome on GestSIS Print");
 });
 
-const htmlToPdf = async (url, pageModifier) => {
+const htmlToPdf = async (url, pageModifier, options = {}) => {
   const browser = await puppeteer.launch(({ headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-web-security', '--disable-features=BlockInsecurePrivateNetworkRequests'] }));
   const page = await browser.newPage();
 
@@ -39,8 +39,8 @@ const htmlToPdf = async (url, pageModifier) => {
     await pageModifier(page);
   }
 
-  const templateFooter = fs.readFileSync('templates/footer.html', 'utf-8')
-  const templateHeader = fs.readFileSync('templates/header.html', 'utf-8')
+  const templateHeader = fs.readFileSync(options.noHeader ? 'templates/empty.html' : 'templates/header.html', 'utf-8')
+  const templateFooter = fs.readFileSync(options.noFooter ? 'templates/empty.html' : 'templates/footer.html', 'utf-8')
 
   await page.goto(url, { waitUntil: 'networkidle0' });
   const pdf = await page.pdf({
@@ -65,16 +65,16 @@ const handlePrintRequest = async (req, res) => {
 
   const authorization = req.get("Authorization");
   let url = decodeURIComponent(req.query.url);
-
+  const options = {
+    noFooter: req.query["no-footer"] === "true",
+    noHeader: req.query["no-header"] === "true"
+  };
   if (!url.startsWith(process.env.ALLOWED_HOST)) {
     res.status(401).json({ error: { message: "Invalid URL" } });
     return;
   }
   url = url.replace(process.env.ALLOWED_HOST, process.env.EFFECTIVE_BASE_URL)
-
-  console.log("Loading : " + url);
-
-  const pdf = await htmlToPdf(url, async (page) => {
+  const pageModifier = async (page) => {
     await page.setExtraHTTPHeaders({
       'sis-id': sisId,
       'authorization': authorization,
@@ -92,7 +92,10 @@ const handlePrintRequest = async (req, res) => {
       console.log('Logger:', msg.text());
       console.log('Logger:', msg.location());
     });
-  });
+  };
+
+  console.log("Loading : " + url);
+  const pdf = await htmlToPdf(url, pageModifier, options);
 
   console.log("PDF generated");
   res.set({ 'Content-Type': 'application/pdf', 'Content-Length': pdf.length })
