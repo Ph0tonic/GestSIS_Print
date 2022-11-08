@@ -31,12 +31,8 @@ app.get('/', async (_, res) => {
   res.send("Welcome on GestSIS Print");
 });
 
-let browser = null;
-(async () => {
-  browser = await puppeteer.launch(({ headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-web-security', '--disable-features=BlockInsecurePrivateNetworkRequests'] }));
-})();
-
 const htmlToPdf = async (url, pageModifier, options = {}) => {
+  const browser = await puppeteer.launch(({ headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-web-security', '--disable-features=BlockInsecurePrivateNetworkRequests'] }));
   const page = await browser.newPage();
 
   if (pageModifier) {
@@ -55,8 +51,7 @@ const htmlToPdf = async (url, pageModifier, options = {}) => {
     footerTemplate: templateFooter,
   });
 
-  await page.close();
-  // await browser.close();
+  await browser.close();
 
   return pdf
 }
