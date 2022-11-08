@@ -52,8 +52,8 @@ const closeBrowser = async () => {
     count -= 1;
     if (count === 0) {
       await browser.close();
+      browser = null;
     }
-    browser = null;
   });
 }
 
@@ -101,6 +101,7 @@ const handlePrintRequest = async (req, res) => {
     return;
   }
   url = url.replace(process.env.ALLOWED_HOST, process.env.EFFECTIVE_BASE_URL)
+  console.log("Reqesting : " + url)
   const pageModifier = async (page) => {
     await page.setExtraHTTPHeaders({
       'sis-id': sisId,
