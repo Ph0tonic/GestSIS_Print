@@ -31,8 +31,12 @@ app.get('/', async (_, res) => {
   res.send("Welcome on GestSIS Print");
 });
 
+let browser = null;
+(async () => {
+  browser = await puppeteer.launch(({ headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-web-security', '--disable-features=BlockInsecurePrivateNetworkRequests'] }));
+})();
+
 const htmlToPdf = async (url, pageModifier, options = {}) => {
-  const browser = await puppeteer.launch(({ headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-web-security', '--disable-features=BlockInsecurePrivateNetworkRequests'] }));
   const page = await browser.newPage();
 
   if (pageModifier) {
@@ -51,7 +55,8 @@ const htmlToPdf = async (url, pageModifier, options = {}) => {
     footerTemplate: templateFooter,
   });
 
-  await browser.close();
+  await page.close();
+  // await browser.close();
 
   return pdf
 }
@@ -98,8 +103,8 @@ const handlePrintRequest = async (req, res) => {
   const pdf = await htmlToPdf(url, pageModifier, options);
 
   console.log("PDF generated");
-  res.set({ 'Content-Type': 'application/pdf', 'Content-Length': pdf.length })
-  res.send(pdf)
+  res.set({ 'Content-Type': 'application/pdf', 'Content-Length': pdf.length });
+  res.send(pdf);
 }
 
 app.get('/api/v1/print', handlePrintRequest);
