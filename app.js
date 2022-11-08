@@ -1,4 +1,5 @@
 const puppeteer = require('puppeteer');
+const Mutex = require('async-mutex').Mutex;
 const express = require('express');
 const { expressjwt } = require("express-jwt");
 const fs = require('fs');
@@ -31,8 +32,33 @@ app.get('/', async (_, res) => {
   res.send("Welcome on GestSIS Print");
 });
 
+const mutex = new Mutex();
+let browser = null;
+let count = 0;
+
+const launchBroswer = async () => {
+  await mutex.runExclusive(async () => {
+    // Initialize our resource
+    if (count === 0) {
+      browser = await puppeteer.launch(({ headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-web-security', '--disable-features=BlockInsecurePrivateNetworkRequests'] }));
+    }
+    count += 1;
+  });
+  return browser;
+}
+
+const closeBrowser = async () => {
+  await mutex.runExclusive(async () => {
+    count -= 1;
+    if (browser === 0) {
+      await browser.close();
+    }
+    browser = null;
+  });
+}
+
 const htmlToPdf = async (url, pageModifier, options = {}) => {
-  const browser = await puppeteer.launch(({ headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-web-security', '--disable-features=BlockInsecurePrivateNetworkRequests'] }));
+  const browser = await launchBroswer();
   const page = await browser.newPage();
 
   if (pageModifier) {
@@ -51,7 +77,8 @@ const htmlToPdf = async (url, pageModifier, options = {}) => {
     footerTemplate: templateFooter,
   });
 
-  await browser.close();
+  await page.close();
+  await closeBrowser();
 
   return pdf
 }
