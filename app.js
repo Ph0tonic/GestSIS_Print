@@ -50,7 +50,7 @@ const launchBroswer = async () => {
 const closeBrowser = async () => {
   await mutex.runExclusive(async () => {
     count -= 1;
-    if (browser === 0) {
+    if (count === 0) {
       await browser.close();
     }
     browser = null;
