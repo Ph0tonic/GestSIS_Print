@@ -2,6 +2,7 @@ const puppeteer = require('puppeteer');
 const Mutex = require('async-mutex').Mutex;
 const express = require('express');
 const { expressjwt } = require("express-jwt");
+const bodyParser = require('body-parser');
 const fs = require('fs');
 require('dotenv').config();
 
@@ -16,10 +17,10 @@ try {
 }
 
 // Setup JWT middleware
-app.use(
-  expressjwt({ secret: publicKey, algorithms: ["RS256"] })
-    .unless({ path: ["/"] })
-);
+app.use(expressjwt({ secret: publicKey, algorithms: ["RS256"] }).unless({ path: ["/"] }));
+
+// create application/json parser
+var jsonParser = bodyParser.json()
 
 // Setup cors middleware
 const cors = require('cors');
@@ -57,7 +58,7 @@ const closeBrowser = async () => {
   });
 }
 
-const htmlToPdf = async (url, pageModifier, options = {}) => {
+const htmlToPdf = async (pageLoader, pageModifier, options = {}) => {
   const browser = await launchBroswer();
   const page = await browser.newPage();
 
@@ -68,7 +69,7 @@ const htmlToPdf = async (url, pageModifier, options = {}) => {
   const templateHeader = fs.readFileSync(options.noHeader ? 'templates/empty.html' : 'templates/header.html', 'utf-8')
   const templateFooter = fs.readFileSync(options.noFooter ? 'templates/empty.html' : 'templates/footer.html', 'utf-8')
 
-  await page.goto(url, { waitUntil: 'networkidle0' });
+  await pageLoader(page);
   const pdf = await page.pdf({
     format: 'A4',
     margin: { left: '1.5cm', top: '1cm', right: '0.5cm', bottom: '2cm' },
@@ -83,7 +84,7 @@ const htmlToPdf = async (url, pageModifier, options = {}) => {
   return pdf
 }
 
-const handlePrintRequest = async (req, res) => {
+const handleGetPrintRequest = async (req, res) => {
   const sisId = req.get("Sis-Id");
   if (!sisId) {
     res.status(401).json({ error: { message: "Missing SisId" } });
@@ -102,6 +103,7 @@ const handlePrintRequest = async (req, res) => {
   }
   url = url.replace(process.env.ALLOWED_HOST, process.env.EFFECTIVE_BASE_URL)
   console.log("Reqesting : " + url)
+
   const pageModifier = async (page) => {
     await page.setExtraHTTPHeaders({
       'sis-id': sisId,
@@ -122,15 +124,53 @@ const handlePrintRequest = async (req, res) => {
     });
   };
 
-  console.log("Loading : " + url);
-  const pdf = await htmlToPdf(url, pageModifier, options);
+  const pageLoader = async (page) => {
+    console.log("Page loader, GOTO : " + url);
+    return page.goto(url, { waitUntil: 'networkidle0' })
+  }
+
+  const pdf = await htmlToPdf(pageLoader, pageModifier, options);
 
   console.log("PDF generated");
   res.set({ 'Content-Type': 'application/pdf', 'Content-Length': pdf.length });
   res.send(pdf);
 }
 
-app.get('/api/v1/print', handlePrintRequest);
+const handlePostPrintRequest = async (req, res) => {
+  const options = {
+    // noFooter: req.body["no-footer"] === "true",
+    // noHeader: req.body["no-header"] === "true",
+  };
+  const content = req.body.content;
+
+  const pageModifier = async (page) => {
+    page.on('requestfailed', request => {
+      console.log(`url: ${request.url()}, errText: ${request.failure().errorText}, method: ${request.method()}`)
+    });
+    page.on("pageerror", err => {
+      console.log(`Page error: ${err.toString()}`);
+    });
+    page.on('console', msg => {
+      console.log('Logger:', msg.type());
+      console.log('Logger:', msg.text());
+      console.log('Logger:', msg.location());
+    });
+  };
+
+  const pageLoader = async (page) => {
+    console.log("Page loader, SET_CONTENT");
+    return page.setContent(content, { waitUntil: 'networkidle0' })
+  }
+
+  const pdf = await htmlToPdf(pageLoader, pageModifier, options);
+
+  console.log("PDF generated");
+  res.set({ 'Content-Type': 'application/pdf', 'Content-Length': pdf.length });
+  res.send(pdf);
+}
+
+app.get('/api/v1/print', handleGetPrintRequest);
+app.post('/api/v1/print', jsonParser, handlePostPrintRequest);
 
 app.listen(port, () => {
   console.log(`GestSIS Print listening on port ${port}`)
