@@ -59,7 +59,7 @@ const closeBrowser = async () => {
   });
 }
 
-const htmlToPdf = async (pageLoader, pageModifier, options = {}, sisId = '') => {
+const htmlToPdf = async (pageLoader, pageModifier, options = {}, baseUrl = '', sisId = '') => {
   const browser = await launchBroswer();
   const page = await browser.newPage();
 
@@ -68,7 +68,7 @@ const htmlToPdf = async (pageLoader, pageModifier, options = {}, sisId = '') => 
   }
 
   const timestamp = new Date().getTime();
-  const imageUrl = "http://api:8000/api/v2/sis-logo/" + sisId + "?t=" + timestamp;
+  const imageUrl = baseUrl + "/api/v2/sis-logo/" + sisId + "?t=" + timestamp;
   const imageUrlData = await fetch(imageUrl);
   const buffer = await imageUrlData.arrayBuffer();
   const stringifiedBuffer = Buffer.from(buffer).toString('base64');
@@ -140,7 +140,7 @@ const handleGetPrintRequest = async (req, res) => {
     return page.goto(url, { waitUntil: 'networkidle0' })
   }
 
-  const pdf = await htmlToPdf(pageLoader, pageModifier, options, sisId);
+  const pdf = await htmlToPdf(pageLoader, pageModifier, options, process.env.EFFECTIVE_BASE_URL, sisId);
 
   console.log("PDF generated");
   res.set({ 'Content-Type': 'application/pdf', 'Content-Length': pdf.length });
