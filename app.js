@@ -4,6 +4,7 @@ const express = require('express');
 const { expressjwt } = require("express-jwt");
 const bodyParser = require('body-parser');
 const fs = require('fs');
+const fetch = require('node-fetch');
 require('dotenv').config();
 
 const app = express();
@@ -58,7 +59,7 @@ const closeBrowser = async () => {
   });
 }
 
-const htmlToPdf = async (pageLoader, pageModifier, options = {}) => {
+const htmlToPdf = async (pageLoader, pageModifier, options = {}, sisId = '') => {
   const browser = await launchBroswer();
   const page = await browser.newPage();
 
@@ -66,13 +67,23 @@ const htmlToPdf = async (pageLoader, pageModifier, options = {}) => {
     await pageModifier(page);
   }
 
-  const templateHeader = fs.readFileSync(options.noHeader ? 'templates/empty.html' : 'templates/header.html', 'utf-8')
-  const templateFooter = fs.readFileSync(options.noFooter ? 'templates/empty.html' : 'templates/footer.html', 'utf-8')
+  const timestamp = new Date().getTime();
+  const imageUrl = "http://api:8000/api/v2/sis-logo/" + sisId + "?t=" + timestamp;
+  const imageUrlData = await fetch(imageUrl);
+  const buffer = await imageUrlData.arrayBuffer();
+  const stringifiedBuffer = Buffer.from(buffer).toString('base64');
+  const contentType = imageUrlData.headers.get('content-type');
+  const imageBase64 = `<img class="header-logo" src="data:image/${contentType};base64,${stringifiedBuffer}" />`;
+  const templateLogoHeader = '<html><head><style type="text/css">#header { padding: 0; margin: 0; } .content-header { width: 100%; color: black; padding: 2px; padding-top: 5px; margin-top: 0.2cm; margin-left: 1.2cm; margin-right: 0.5cm; margin-bottom: 0.5cm; font-size: 8px; } .header-logo { max-width: 5cm; max-height: 1cm; } </style></head><body><div class="content-header">' +
+    imageBase64 + '</div></body></html>';
+
+  const templateHeader = options.noHeader ? fs.readFileSync('templates/empty.html', 'utf-8') : templateLogoHeader;
+  const templateFooter = fs.readFileSync(options.noFooter ? 'templates/empty.html' : 'templates/footer.html', 'utf-8');
 
   await pageLoader(page);
   const pdf = await page.pdf({
     format: 'A4',
-    margin: { left: '1.5cm', top: '1cm', right: '0.5cm', bottom: '2cm' },
+    margin: { left: '1.5cm', top: '2cm', right: '0.5cm', bottom: '2cm' },
     displayHeaderFooter: true,
     headerTemplate: templateHeader,
     footerTemplate: templateFooter,
@@ -129,7 +140,7 @@ const handleGetPrintRequest = async (req, res) => {
     return page.goto(url, { waitUntil: 'networkidle0' })
   }
 
-  const pdf = await htmlToPdf(pageLoader, pageModifier, options);
+  const pdf = await htmlToPdf(pageLoader, pageModifier, options, sisId);
 
   console.log("PDF generated");
   res.set({ 'Content-Type': 'application/pdf', 'Content-Length': pdf.length });
@@ -141,6 +152,7 @@ const handlePostPrintRequest = async (req, res) => {
     // noFooter: req.body["no-footer"] === "true",
     // noHeader: req.body["no-header"] === "true",
   };
+  console.log(req.body)
   const content = req.body.content;
 
   const pageModifier = async (page) => {
