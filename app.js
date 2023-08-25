@@ -42,7 +42,7 @@ const launchBroswer = async () => {
   await mutex.runExclusive(async () => {
     // Initialize our resource
     if (count === 0) {
-      browser = await puppeteer.launch(({ headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-web-security', '--disable-features=BlockInsecurePrivateNetworkRequests'] }));
+      browser = await puppeteer.launch(({ headless: 'new', args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-web-security', '--disable-features=BlockInsecurePrivateNetworkRequests'] }));
     }
     count += 1;
   });
@@ -113,7 +113,7 @@ const handleGetPrintRequest = async (req, res) => {
     return;
   }
   url = url.replace(process.env.ALLOWED_HOST, process.env.EFFECTIVE_BASE_URL)
-  console.log("Reqesting : " + url)
+  console.log("Requesting : " + url)
 
   const pageModifier = async (page) => {
     await page.setExtraHTTPHeaders({
