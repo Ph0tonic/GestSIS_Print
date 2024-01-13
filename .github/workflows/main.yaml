@@ -3,7 +3,7 @@ name: CI
 on:
   # Triggers the workflow on push or pull request events but only for the "master" branch
   push:
-    branches: [ "master" ]
+    branches: ["master"]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -35,7 +35,7 @@ jobs:
         run: ssh staging "cd ~/apps/print.gestsis.ch && git pull"
 
       - name: Install dependencies
-        run: ssh staging "cd ~/apps/print.gestsis.ch && source ~/nodevenv/apps/print.gestsis.ch/16/bin/activate && yarn install --production"
+        run: ssh staging "cd ~/apps/print.gestsis.ch && source ~/nodevenv/apps/print.gestsis.ch/18/bin/activate && yarn install --production"
 
       - name: Restart service
         run: ssh staging "touch ~/apps/print.gestsis.ch/tmp/restart.txt"
