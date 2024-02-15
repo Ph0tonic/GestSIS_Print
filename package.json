@@ -6,16 +6,16 @@
   },
   "license": "MIT",
   "dependencies": {
-    "async-mutex": "^0.4.0",
+    "async-mutex": "^0.4.1",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
-    "dotenv": "^16.3.1",
+    "dotenv": "^16.4.4",
     "express": "^4.18.2",
     "express-jwt": "^8.4.1",
-    "puppeteer": "^21.7.0"
+    "puppeteer": "^22.0.0"
   },
   "devDependencies": {
-    "nodemon": "^3.0.2"
+    "nodemon": "^3.0.3"
   },
-  "packageManager": "yarn@4.0.2"
+  "packageManager": "yarn@4.1.0"
 }
