@@ -35,7 +35,7 @@ jobs:
         run: ssh staging "cd ~/apps/print.gestsis.ch && git pull"
 
       - name: Install dependencies
-        run: ssh staging "cd ~/apps/print.gestsis.ch && source ~/nodevenv/apps/print.gestsis.ch/18/bin/activate && yarn workspaces focus --production"
+        run: ssh staging "cd ~/apps/print.gestsis.ch && source ~/nodevenv/apps/print.gestsis.ch/20/bin/activate && yarn workspaces focus --production"
 
       - name: Restart service
         run: ssh staging "touch ~/apps/print.gestsis.ch/tmp/restart.txt"
