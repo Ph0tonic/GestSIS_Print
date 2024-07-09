@@ -4,7 +4,6 @@
   "scripts": {
     "dev": "nodemon app.js"
   },
-  "type": "module",
   "license": "MIT",
   "dependencies": {
     "async-mutex": "^0.5.0",
