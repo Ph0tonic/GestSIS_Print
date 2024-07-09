@@ -2,7 +2,7 @@
   "name": "gestsis-print",
   "version": "0.0.2",
   "scripts": {
-    "dev": "nodemon app.js"
+    "dev": "nodemon entry.js"
   },
   "license": "MIT",
   "dependencies": {
