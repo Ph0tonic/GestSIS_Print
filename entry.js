@@ -1,4 +1,4 @@
 async function loadApp() {
-    const { app } = await import("./app.cjs");
+    const { app } = await import("./app.js");
 }
 loadApp()

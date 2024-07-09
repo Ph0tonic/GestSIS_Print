@@ -1,11 +1,10 @@
-import puppeteer from 'puppeteer';
-import { Mutex } from 'async-mutex';
-import express from 'express';
-import { expressjwt } from "express-jwt";
-import bodyParser from 'body-parser';
-import fs from 'fs';
-import fetch from 'node-fetch';
-import 'dotenv/config';
+const puppeteer = require('puppeteer');
+const Mutex = require('async-mutex').Mutex;
+const express = require('express');
+const { expressjwt } = require("express-jwt");
+const bodyParser = require('body-parser');
+const fs = require('fs');
+require('dotenv').config();
 
 const app = express();
 const port = 3000;
@@ -24,7 +23,7 @@ app.use(expressjwt({ secret: publicKey, algorithms: ["RS256"] }).unless({ path: 
 var jsonParser = bodyParser.json()
 
 // Setup cors middleware
-import cors from 'cors';
+const cors = require('cors');
 
 app.use(cors({
   origin: '*'
