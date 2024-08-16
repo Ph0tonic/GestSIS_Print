@@ -92,7 +92,7 @@ const htmlToPdf = async (pageLoader, pageModifier, options = {}, baseUrl = '', s
   await page.close();
   await closeBrowser();
 
-  return pdf
+  return Buffer.from(pdf)
 }
 
 const handleGetPrintRequest = async (req, res) => {
