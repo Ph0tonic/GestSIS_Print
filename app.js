@@ -13,6 +13,8 @@ const cors = require("cors");
 const port = 3000;
 const app = express();
 
+app.use(cors({ origin: "*" }));
+
 // Single and only valid route
 app.get("/", async (_, res) => {
   res.send("Welcome on GestSIS Print JS");
@@ -216,7 +218,6 @@ try {
   console.error(err);
 }
 
-app.use(cors({ origin: "*" }));
 app.use(
   expressjwt({ secret: publicKey, algorithms: ["RS256"] }).unless({
     path: ["/"],

@@ -13,6 +13,8 @@ import cors from "cors";
 const port = 3000;
 const app = express();
 
+app.use(cors({ origin: "*" }));
+
 app.get("/debug-sentry", function mainHandler(req, res) {
   throw new Error("My first Sentry error!");
 });
@@ -219,8 +221,6 @@ try {
   console.error(err);
 }
 
-// Setup JWT middleware
-app.use(cors({ origin: "*" }));
 app.use(
   expressjwt({ secret: publicKey, algorithms: ["RS256"] }).unless({
     path: ["/"],
