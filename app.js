@@ -12,10 +12,6 @@ const Sentry = require("@sentry/node");
 const port = 3000;
 const app = express();
 
-app.get("/debug-sentry", function mainHandler(req, res) {
-  throw new Error("My first Sentry error!");
-});
-
 // Single and only valid route
 app.get("/", async (_, res) => {
   res.send("Welcome on GestSIS Print");
