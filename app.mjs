@@ -1,3 +1,5 @@
+import "./instrument.mjs";
+
 import puppeteer from "puppeteer";
 import { Mutex } from "async-mutex";
 import express from "express";
@@ -5,35 +7,14 @@ import { expressjwt } from "express-jwt";
 import bodyParser from "body-parser";
 import fs from "fs";
 import "dotenv/config";
+import * as Sentry from "@sentry/node";
 
-const app = express();
 const port = 3000;
+const app = express();
 
-let publicKey = "";
-try {
-  publicKey = fs.readFileSync("keys/auth-public.key", "utf8");
-} catch (err) {
-  console.error(err);
-}
-
-// Setup JWT middleware
-app.use(
-  expressjwt({ secret: publicKey, algorithms: ["RS256"] }).unless({
-    path: ["/"],
-  })
-);
-
-// create application/json parser
-var jsonParser = bodyParser.json();
-
-// Setup cors middleware
-import cors from "cors";
-
-app.use(
-  cors({
-    origin: "*",
-  })
-);
+app.get("/debug-sentry", function mainHandler(req, res) {
+  throw new Error("My first Sentry error!");
+});
 
 // Single and only valid route
 app.get("/", async (_, res) => {
@@ -49,7 +30,7 @@ const launchBroswer = async () => {
     // Initialize our resource
     if (count === 0) {
       browser = await puppeteer.launch({
-        headless: "new",
+        headless: true,
         args: [
           "--no-sandbox",
           "--disable-setuid-sandbox",
@@ -223,7 +204,35 @@ const handlePostPrintRequest = async (req, res) => {
 };
 
 app.get("/api/v1/print", handleGetPrintRequest);
+
+// create application/json parser
+var jsonParser = bodyParser.json();
 app.post("/api/v1/print", jsonParser, handlePostPrintRequest);
+
+Sentry.setupExpressErrorHandler(app);
+
+let publicKey = "";
+try {
+  publicKey = fs.readFileSync("keys/auth-public.key", "utf8");
+} catch (err) {
+  console.error(err);
+}
+
+// Setup JWT middleware
+app.use(
+  expressjwt({ secret: publicKey, algorithms: ["RS256"] }).unless({
+    path: ["/"],
+  })
+);
+
+// Setup cors middleware
+import cors from "cors";
+
+app.use(
+  cors({
+    origin: "*",
+  })
+);
 
 app.listen(port, () => {
   console.log(`GestSIS Print listening on port ${port}`);
