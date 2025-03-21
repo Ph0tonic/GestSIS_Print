@@ -1,4 +1,4 @@
 async function loadApp() {
-    const { app } = await import("./app.mjs");
+  const { app } = await import("./app.mjs");
 }
-loadApp()
+loadApp();

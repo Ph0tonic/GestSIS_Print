@@ -8,13 +8,14 @@ const bodyParser = require("body-parser");
 const fs = require("fs");
 require("dotenv").config();
 const Sentry = require("@sentry/node");
+const cors = require("cors");
 
 const port = 3000;
 const app = express();
 
 // Single and only valid route
 app.get("/", async (_, res) => {
-  res.send("Welcome on GestSIS Print");
+  res.send("Welcome on GestSIS Print JS");
 });
 
 const mutex = new Mutex();
@@ -221,15 +222,7 @@ app.use(
     path: ["/"],
   })
 );
-
-// Setup cors middleware
-const cors = require("cors");
-
-app.use(
-  cors({
-    origin: "*",
-  })
-);
+app.use(cors({ origin: "*" }));
 
 app.listen(port, () => {
   console.log(`GestSIS Print listening on port ${port}`);

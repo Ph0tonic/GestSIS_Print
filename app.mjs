@@ -18,7 +18,7 @@ app.get("/debug-sentry", function mainHandler(req, res) {
 
 // Single and only valid route
 app.get("/", async (_, res) => {
-  res.send("Welcome on GestSIS Print");
+  res.send("Welcome on GestSIS Print MJS");
 });
 
 const mutex = new Mutex();
