@@ -34,6 +34,7 @@ const launchBroswer = async () => {
     if (count === 0) {
       browser = await puppeteer.launch({
         headless: true,
+        // browser: "firefox",
         args: [
           "--no-sandbox",
           "--disable-setuid-sandbox",
@@ -64,46 +65,52 @@ const htmlToPdf = async (
   baseUrl = "",
   sisId = ""
 ) => {
-  const browser = await launchBroswer();
-  const page = await browser.newPage();
+  try {
+    const browser = await launchBroswer();
+    const page = await browser.newPage();
 
-  if (pageModifier) {
-    await pageModifier(page);
+    if (pageModifier) {
+      await pageModifier(page);
+    }
+
+    const timestamp = new Date().getTime();
+    const imageUrl = baseUrl + "/api/v2/sis-logo/" + sisId + "?t=" + timestamp;
+    const imageUrlData = await fetch(imageUrl);
+    const buffer = await imageUrlData.arrayBuffer();
+    const stringifiedBuffer = Buffer.from(buffer).toString("base64");
+    const contentType = imageUrlData.headers.get("content-type");
+    const imageBase64 = `<img class="header-logo" src="data:image/${contentType};base64,${stringifiedBuffer}" />`;
+    const templateLogoHeader =
+      '<html><head><style type="text/css">#header { padding: 0; margin: 0; } .content-header { width: 100%; color: black; padding: 2px; padding-top: 5px; margin-top: 0.2cm; margin-left: 1.2cm; margin-right: 0.5cm; margin-bottom: 0.5cm; font-size: 8px; } .header-logo { max-width: 5cm; max-height: 1.5cm; } </style></head><body><div class="content-header">' +
+      imageBase64 +
+      "</div></body></html>";
+
+    const templateHeader = options.noHeader
+      ? fs.readFileSync("templates/empty.html", "utf-8")
+      : templateLogoHeader;
+    const templateFooter = fs.readFileSync(
+      options.noFooter ? "templates/empty.html" : "templates/footer.html",
+      "utf-8"
+    );
+
+    await pageLoader(page);
+    const pdf = await page.pdf({
+      format: "A4",
+      margin: { left: "1.5cm", top: "2cm", right: "0.5cm", bottom: "2cm" },
+      displayHeaderFooter: true,
+      headerTemplate: templateHeader,
+      footerTemplate: templateFooter,
+    });
+
+    await page.close();
+
+    return Buffer.from(pdf);
+  } catch (error) {
+    console.log("An error occured : " + error);
+    throw error;
+  } finally {
+    await closeBrowser();
   }
-
-  const timestamp = new Date().getTime();
-  const imageUrl = baseUrl + "/api/v2/sis-logo/" + sisId + "?t=" + timestamp;
-  const imageUrlData = await fetch(imageUrl);
-  const buffer = await imageUrlData.arrayBuffer();
-  const stringifiedBuffer = Buffer.from(buffer).toString("base64");
-  const contentType = imageUrlData.headers.get("content-type");
-  const imageBase64 = `<img class="header-logo" src="data:image/${contentType};base64,${stringifiedBuffer}" />`;
-  const templateLogoHeader =
-    '<html><head><style type="text/css">#header { padding: 0; margin: 0; } .content-header { width: 100%; color: black; padding: 2px; padding-top: 5px; margin-top: 0.2cm; margin-left: 1.2cm; margin-right: 0.5cm; margin-bottom: 0.5cm; font-size: 8px; } .header-logo { max-width: 5cm; max-height: 1.5cm; } </style></head><body><div class="content-header">' +
-    imageBase64 +
-    "</div></body></html>";
-
-  const templateHeader = options.noHeader
-    ? fs.readFileSync("templates/empty.html", "utf-8")
-    : templateLogoHeader;
-  const templateFooter = fs.readFileSync(
-    options.noFooter ? "templates/empty.html" : "templates/footer.html",
-    "utf-8"
-  );
-
-  await pageLoader(page);
-  const pdf = await page.pdf({
-    format: "A4",
-    margin: { left: "1.5cm", top: "2cm", right: "0.5cm", bottom: "2cm" },
-    displayHeaderFooter: true,
-    headerTemplate: templateHeader,
-    footerTemplate: templateFooter,
-  });
-
-  await page.close();
-  await closeBrowser();
-
-  return Buffer.from(pdf);
 };
 
 const handleGetPrintRequest = async (req, res) => {
