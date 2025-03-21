@@ -476,44 +476,44 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@prisma/instrumentation@npm:6.4.1":
-  version: 6.4.1
-  resolution: "@prisma/instrumentation@npm:6.4.1"
+"@prisma/instrumentation@npm:6.5.0":
+  version: 6.5.0
+  resolution: "@prisma/instrumentation@npm:6.5.0"
   dependencies:
     "@opentelemetry/instrumentation": "npm:^0.52.0 || ^0.53.0 || ^0.54.0 || ^0.55.0 || ^0.56.0 || ^0.57.0"
   peerDependencies:
     "@opentelemetry/api": ^1.8
-  checksum: 10c0/16e95b000f98d9ff3af20df1c7350329286b5bed236c66801d72f314ba788def44e02a210313a3858998c6a3fc3175c6815cfec0b6cf9f1f74e015fd768135a7
+  checksum: 10c0/b9223ccc437d0f1f82f8ea8ce50befed18d5337b1079f7a652a0c4e6d9645bcae3ccaf124cc90b94d336b47f195f4bf7b1c4513fac3cb07a8952df576c5b891b
   languageName: node
   linkType: hard
 
-"@puppeteer/browsers@npm:2.7.1":
-  version: 2.7.1
-  resolution: "@puppeteer/browsers@npm:2.7.1"
+"@puppeteer/browsers@npm:2.8.0":
+  version: 2.8.0
+  resolution: "@puppeteer/browsers@npm:2.8.0"
   dependencies:
     debug: "npm:^4.4.0"
     extract-zip: "npm:^2.0.1"
     progress: "npm:^2.0.3"
     proxy-agent: "npm:^6.5.0"
-    semver: "npm:^7.7.0"
+    semver: "npm:^7.7.1"
     tar-fs: "npm:^3.0.8"
     yargs: "npm:^17.7.2"
   bin:
     browsers: lib/cjs/main-cli.js
-  checksum: 10c0/df9bfaca0262955c800e5e33960104f6d1ba693a188de70dfbcd7ffd8c068446744ffee7addf96a4e29a901f86249d81901481b2188ab51dbf4fb3c9f206d566
+  checksum: 10c0/658fde7a9bc65c16a94e3c8bac18d25489694f845d52262145cc913d652dccf9de84787787f923cd35279d917360045e79c5cce14d3771693f829dc672252fbd
   languageName: node
   linkType: hard
 
-"@sentry/core@npm:9.6.0":
-  version: 9.6.0
-  resolution: "@sentry/core@npm:9.6.0"
-  checksum: 10c0/ef7a8bd024f7638e50c88d4b25e48c3cb237b93b38f59d2944b6c4c7fefa3a8e82401672b6cfd63259687f34ddb8bdf054455fb08bcb08dbd1b0c22d93305515
+"@sentry/core@npm:9.7.0":
+  version: 9.7.0
+  resolution: "@sentry/core@npm:9.7.0"
+  checksum: 10c0/e05d5f1c67fda065293c87c6c02f8ac0214b38699cd57ac132158278bd71dee63c47a78ffe5352347779be37eccf64b3e547eb06d3aa3629102bf8db27987e1a
   languageName: node
   linkType: hard
 
-"@sentry/node@npm:^9.6.0":
-  version: 9.6.0
-  resolution: "@sentry/node@npm:9.6.0"
+"@sentry/node@npm:^9.7.0":
+  version: 9.7.0
+  resolution: "@sentry/node@npm:9.7.0"
   dependencies:
     "@opentelemetry/api": "npm:^1.9.0"
     "@opentelemetry/context-async-hooks": "npm:^1.30.1"
@@ -545,19 +545,19 @@ __metadata:
     "@opentelemetry/resources": "npm:^1.30.1"
     "@opentelemetry/sdk-trace-base": "npm:^1.30.1"
     "@opentelemetry/semantic-conventions": "npm:^1.30.0"
-    "@prisma/instrumentation": "npm:6.4.1"
-    "@sentry/core": "npm:9.6.0"
-    "@sentry/opentelemetry": "npm:9.6.0"
+    "@prisma/instrumentation": "npm:6.5.0"
+    "@sentry/core": "npm:9.7.0"
+    "@sentry/opentelemetry": "npm:9.7.0"
     import-in-the-middle: "npm:^1.13.0"
-  checksum: 10c0/8acd7f2ca88bdf2a9a831150d29e6ff08ac832f55922f082d3dbcf07d9dbd857a6f5cd1dbf1c491bcf1d5ce8da11392ccaba829512719374034d1a8c187aaa94
+  checksum: 10c0/4ec75c56973c09bd81ac58000d3dfab4f6ae4e5f5078cb80c732f3f0ceb4a876d7ecf44212a4df2e6b82dee190c4ba1882a76844a6811dcfbaa581c956d34b7d
   languageName: node
   linkType: hard
 
-"@sentry/opentelemetry@npm:9.6.0":
-  version: 9.6.0
-  resolution: "@sentry/opentelemetry@npm:9.6.0"
+"@sentry/opentelemetry@npm:9.7.0":
+  version: 9.7.0
+  resolution: "@sentry/opentelemetry@npm:9.7.0"
   dependencies:
-    "@sentry/core": "npm:9.6.0"
+    "@sentry/core": "npm:9.7.0"
   peerDependencies:
     "@opentelemetry/api": ^1.9.0
     "@opentelemetry/context-async-hooks": ^1.30.1
@@ -565,7 +565,7 @@ __metadata:
     "@opentelemetry/instrumentation": ^0.57.1
     "@opentelemetry/sdk-trace-base": ^1.30.1
     "@opentelemetry/semantic-conventions": ^1.28.0
-  checksum: 10c0/d50afd0a05bf035e1cdfc81572e87f6a03ac6791b0c4c04f5e919254be4c1684990decb358d7b22ff2027914d14567805bee8476c22dc2dc2c1190a328c6c791
+  checksum: 10c0/12b53dd3d035c41285ba22581705a1dd550481dce7bad7520da764f7f0346ca6a820f41377c5e424842665e88aa648636babbc74e52d8d51e8d40ced04818364
   languageName: node
   linkType: hard
 
@@ -1185,10 +1185,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"devtools-protocol@npm:0.0.1402036":
-  version: 0.0.1402036
-  resolution: "devtools-protocol@npm:0.0.1402036"
-  checksum: 10c0/ebf2e7dd8ee6b1665ae45a648bf701294fd94bb2132fadee74c60d511362997834bf99de28cc4ee92f6c603bc0be390b72064cd2ab8839d9fa0cd22d907ffc46
+"devtools-protocol@npm:0.0.1413902":
+  version: 0.0.1413902
+  resolution: "devtools-protocol@npm:0.0.1413902"
+  checksum: 10c0/5feeda3952bb48a404fe8b50da8d7645e8b132fdbeac85726f4130f629de15dba3bfc858f240dc4173a130d09ca8a26942548406703f378d1fde0011483ef491
   languageName: node
   linkType: hard
 
@@ -1579,7 +1579,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "gestsis-print@workspace:."
   dependencies:
-    "@sentry/node": "npm:^9.6.0"
+    "@sentry/node": "npm:^9.7.0"
     async-mutex: "npm:^0.5.0"
     body-parser: "npm:^1.20.3"
     cors: "npm:^2.8.5"
@@ -1587,7 +1587,7 @@ __metadata:
     express: "npm:^4.21.2"
     express-jwt: "npm:^8.5.1"
     nodemon: "npm:^3.1.9"
-    puppeteer: "npm:^24.3.1"
+    puppeteer: "npm:^24.4.0"
   languageName: unknown
   linkType: soft
 
@@ -2681,33 +2681,33 @@ __metadata:
   languageName: node
   linkType: hard
 
-"puppeteer-core@npm:24.3.1":
-  version: 24.3.1
-  resolution: "puppeteer-core@npm:24.3.1"
+"puppeteer-core@npm:24.4.0":
+  version: 24.4.0
+  resolution: "puppeteer-core@npm:24.4.0"
   dependencies:
-    "@puppeteer/browsers": "npm:2.7.1"
+    "@puppeteer/browsers": "npm:2.8.0"
     chromium-bidi: "npm:2.1.2"
     debug: "npm:^4.4.0"
-    devtools-protocol: "npm:0.0.1402036"
+    devtools-protocol: "npm:0.0.1413902"
     typed-query-selector: "npm:^2.12.0"
     ws: "npm:^8.18.1"
-  checksum: 10c0/6c465bc48d884f2b917c17d3674d0215da019db1f9588a9944bc6a3a93fe9ad2e396dfae977551bdc9623fc959bde7d9e829987a89e49d2c335f1dc1e5bf8670
+  checksum: 10c0/59da89a34112ab5c668027f489022e115212cbbeabe9fef051a89097676c7617636d0a05e66fb1cf4e0c15c423244871b4a75a5b262308a67e8dc1261f5eea25
   languageName: node
   linkType: hard
 
-"puppeteer@npm:^24.3.1":
-  version: 24.3.1
-  resolution: "puppeteer@npm:24.3.1"
+"puppeteer@npm:^24.4.0":
+  version: 24.4.0
+  resolution: "puppeteer@npm:24.4.0"
   dependencies:
-    "@puppeteer/browsers": "npm:2.7.1"
+    "@puppeteer/browsers": "npm:2.8.0"
     chromium-bidi: "npm:2.1.2"
     cosmiconfig: "npm:^9.0.0"
-    devtools-protocol: "npm:0.0.1402036"
-    puppeteer-core: "npm:24.3.1"
+    devtools-protocol: "npm:0.0.1413902"
+    puppeteer-core: "npm:24.4.0"
     typed-query-selector: "npm:^2.12.0"
   bin:
     puppeteer: lib/cjs/puppeteer/node/cli.js
-  checksum: 10c0/76b133c93a71f3da8b8ca5cec2e3e2c60e57fa1c8c28a7b946de7e4a8fc691e9e45aab68d102edf130853406c4dabd75879bb60afd16a0fe8cd48f15383232bd
+  checksum: 10c0/5f3fb337a76dad85acc724ae48e838bde4a2ff499ca8bcd77b9dc2bcdaa26749411282b4258d70512c7235f2809863c872a3fb5857e2a457b9654bf146da70d8
   languageName: node
   linkType: hard
 
@@ -2847,7 +2847,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"semver@npm:^7.5.2, semver@npm:^7.7.0":
+"semver@npm:^7.5.2, semver@npm:^7.7.1":
   version: 7.7.1
   resolution: "semver@npm:7.7.1"
   bin:
