@@ -216,13 +216,12 @@ try {
   console.error(err);
 }
 
-// Setup JWT middleware
+app.use(cors({ origin: "*" }));
 app.use(
   expressjwt({ secret: publicKey, algorithms: ["RS256"] }).unless({
     path: ["/"],
   })
 );
-app.use(cors({ origin: "*" }));
 
 app.listen(port, () => {
   console.log(`GestSIS Print listening on port ${port}`);

@@ -8,6 +8,7 @@ import bodyParser from "body-parser";
 import fs from "fs";
 import "dotenv/config";
 import * as Sentry from "@sentry/node";
+import cors from "cors";
 
 const port = 3000;
 const app = express();
@@ -219,18 +220,10 @@ try {
 }
 
 // Setup JWT middleware
+app.use(cors({ origin: "*" }));
 app.use(
   expressjwt({ secret: publicKey, algorithms: ["RS256"] }).unless({
     path: ["/"],
-  })
-);
-
-// Setup cors middleware
-import cors from "cors";
-
-app.use(
-  cors({
-    origin: "*",
   })
 );
 
